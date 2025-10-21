@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>代理模式示例 - 送花场景</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .output {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            font-family: monospace;
+            white-space: pre-line;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>代理模式示例 - 送花场景</h1>
+        <p>这个例子展示了代理模式在现实场景中的应用：小红作为小美的代理，控制着送花的结果。</p>
+        
+        <button onclick="testDirectSend()">直接送花给小美</button>
+        <button onclick="testProxySend()">通过小红代理送花</button>
+        <button onclick="clearOutput()">清空输出</button>
+        
+        <div id="output" class="output">点击按钮查看代理模式的效果...</div>
+    </div>
+
+    <script>
+        // 目标对象 - 小美
+        class XiaoMei {
+            constructor() {
+                this.name = '小美';
+                this.hometown = '南昌';
+                this.xq = 60; // 心情值
+            }
+            
+            receiveFlower(sender) {
+                console.log(`小美收到了${sender.name}送的花`);
+                console.log(`当前心情值: ${this.xq}`);
+                
+                if (this.xq > 80) {
+                    console.log('让我们在一起吧！');
+                    return 'accept';
+                } else {
+                    console.log('抱歉，我们不合适。');
+                    return 'reject';
+                }
+            }
+        }
+
+        // 代理对象 - 小红
+        class XiaoHong {
+            constructor(target) {
+                this.name = '小红';
+                this.target = target; // 被代理的对象
+            }
+            
+            receiveFlower(sender) {
+                console.log(`小红收到了${sender.name}送的花`);
+                console.log('小红作为代理，正在处理...');
+                
+                // 代理可以修改目标对象的状态
+                setTimeout(() => {
+                    console.log('小红偷偷提高了小美的心情值...');
+                    this.target.xq = 100;
+                    console.log(`小美的心情值现在是: ${this.target.xq}`);
+                    
+                    // 代理决定是否转发请求
+                    if (this.target.xq > 80) {
+                        console.log('小红决定转发给小美...');
+                        this.target.receiveFlower(sender);
+                    } else {
+                        console.log('小红觉得时机不对，暂时不转发');
+                    }
+                }, 2000);
+            }
+        }
+
+        // 客户端 - 小帅
+        class XiaoShuai {
+            constructor() {
+                this.name = '小帅';
+            }
+            
+            sendFlower(target) {
+                console.log(`${this.name}想要送花...`);
+                target.receiveFlower(this);
+            }
+        }
+
+        // 创建实例
+        const xiaoMei = new XiaoMei();
+        const xiaoHong = new XiaoHong(xiaoMei);
+        const xiaoShuai = new XiaoShuai();
+
+        // 输出函数
+        function logToOutput(message) {
+            const output = document.getElementById('output');
+            output.textContent += message + '\n';
+        }
+
+        // 重写console.log以显示在页面上
+        const originalLog = console.log;
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            logToOutput(args.join(' '));
+        };
+
+        // 测试函数
+        function testDirectSend() {
+            document.getElementById('output').textContent = '';
+            console.log('=== 直接送花测试 ===');
+            xiaoShuai.sendFlower(xiaoMei);
+        }
+
+        function testProxySend() {
+            document.getElementById('output').textContent = '';
+            console.log('=== 代理送花测试 ===');
+            xiaoShuai.sendFlower(xiaoHong);
+        }
+
+        function clearOutput() {
+            document.getElementById('output').textContent = '点击按钮查看代理模式的效果...';
+        }
+    </script>
+</body>
+</html>
