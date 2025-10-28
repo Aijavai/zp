@@ -29,6 +29,7 @@
   { "input": "accessibility features for disabled users", "output": "frontend" },
   { "input": "scalable architecture for growing user base", "output": "backend" }
 ];
+// 长短期记忆网络,擅长处理序列数据，如文本。适合文本分类任务。
 const network = new brain.recurrent.LSTM();
 // 把数据给它学习一下
 // 训练
@@ -41,6 +42,8 @@ network.train(data, {
 const output = network.run(
     "CSS Position Absolute And Animation"
 )
+
+console.log(output);
     </script>
 </body> 
 </html>

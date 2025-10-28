@@ -18,5 +18,26 @@
     - 机器学习中的比较简单的分类问题
     - 数据准确性、丰富性很重要
 
+- Brain.js 
+    - Simple API  
+    Brain.js 提供了非常简洁的 API。你只需要定义输入和期望的输出，然后调用 train() 方法，库就会自动处理背后的复杂计算。
+    const brain = require('brain.js');
+    const net = new brain.NeuralNetwork();
+
+    net.train.([
+        {input:[], output:[]}
+        {input:[], output:[]}
+        {input:[], output:[]}
+    ]);
+
+    const output = net.run([1, 0]);
 ## 大模型训练师
     LLM trainer
+
+## 25年AI的发展
+- openai 发布了Sora2 冲击 tiktok
+- 豆包植入了一键购买 AI电商
+- openai发布了 Atlas AI浏览器，冲击Google
+- to B 企业端 AI Agents 正在提高效率
+
+使用大模型来搜索，解决问题 LLM 有比百度/淘宝更好的**用户体验**
