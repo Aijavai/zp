@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cursor Agent Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            background: white;
+            padding: 3rem;
+            border-radius: 1rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 1rem;
+            font-size: 2rem;
+        }
+        
+        #message {
+            color: #667eea;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 2rem 0;
+            padding: 1rem;
+            background: #f7f7f7;
+            border-radius: 0.5rem;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .loading {
+            opacity: 0.5;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Cursor Agent Test</h1>
+        <div id="message" class="loading">Loading...</div>
+        <button onclick="fetchMessage()">Refresh Message</button>
+    </div>
+
+    <script>
+        async function fetchMessage() {
+            const messageEl = document.getElementById('message');
+            messageEl.classList.add('loading');
+            messageEl.textContent = 'Loading...';
+            
+            try {
+                const response = await fetch('/hello');
+                const data = await response.json();
+                messageEl.textContent = data.message;
+                messageEl.classList.remove('loading');
+            } catch (error) {
+                messageEl.textContent = 'Error: ' + error.message;
+                messageEl.classList.remove('loading');
+            }
+        }
+        
+        // Fetch message on page load
+        fetchMessage();
+    </script>
+</body>
+</html>
+
