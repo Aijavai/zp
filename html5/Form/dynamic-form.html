@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>动态表单 - 添加/删除字段</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #666;
+      margin-bottom: 30px;
+    }
+
+    .section {
+      margin-bottom: 30px;
+      padding: 20px;
+      background: #f8f9fa;
+      border-radius: 10px;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .add-btn {
+      padding: 8px 15px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.3s;
+    }
+
+    .add-btn:hover {
+      background: #5568d3;
+      transform: translateY(-2px);
+    }
+
+    .field-group {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      display: grid;
+      grid-template-columns: 1fr 1fr auto;
+      gap: 10px;
+      align-items: end;
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .field-group.removing {
+      animation: slideOut 0.3s ease forwards;
+    }
+
+    @keyframes slideOut {
+      to {
+        opacity: 0;
+        transform: translateX(20px);
+      }
+    }
+
+    .form-control {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-control label {
+      margin-bottom: 5px;
+      color: #555;
+      font-size: 14px;
+    }
+
+    .form-control input,
+    .form-control select {
+      padding: 10px;
+      border: 2px solid #ddd;
+      border-radius: 5px;
+      font-size: 14px;
+      transition: border-color 0.3s;
+    }
+
+    .form-control input:focus,
+    .form-control select:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .remove-btn {
+      padding: 10px 15px;
+      background: #e74c3c;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.3s;
+      white-space: nowrap;
+    }
+
+    .remove-btn:hover {
+      background: #c0392b;
+      transform: scale(1.05);
+    }
+
+    .contact-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr auto;
+      gap: 10px;
+      align-items: end;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.2s;
+      margin-top: 20px;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .result {
+      margin-top: 20px;
+      padding: 20px;
+      background: #d4edda;
+      border: 1px solid #c3e6cb;
+      border-radius: 8px;
+      display: none;
+    }
+
+    .result h3 {
+      color: #155724;
+      margin-bottom: 10px;
+    }
+
+    .result pre {
+      background: white;
+      padding: 15px;
+      border-radius: 5px;
+      overflow-x: auto;
+      color: #333;
+    }
+
+    .empty-hint {
+      text-align: center;
+      color: #999;
+      padding: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .field-group,
+      .contact-group {
+        grid-template-columns: 1fr;
+      }
+
+      .remove-btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎨 动态表单示例</h1>
+    <p class="subtitle">可以动态添加和删除表单字段</p>
+
+    <form id="dynamicForm">
+      <!-- 教育经历 -->
+      <div class="section">
+        <div class="section-title">
+          <span>📚 教育经历</span>
+          <button type="button" class="add-btn" id="addEducation">+ 添加</button>
+        </div>
+        <div id="educationList">
+          <div class="empty-hint">暂无教育经历，点击"添加"按钮添加</div>
+        </div>
+      </div>
+
+      <!-- 工作经历 -->
+      <div class="section">
+        <div class="section-title">
+          <span>💼 工作经历</span>
+          <button type="button" class="add-btn" id="addWork">+ 添加</button>
+        </div>
+        <div id="workList">
+          <div class="empty-hint">暂无工作经历，点击"添加"按钮添加</div>
+        </div>
+      </div>
+
+      <!-- 联系方式 -->
+      <div class="section">
+        <div class="section-title">
+          <span>📞 联系方式</span>
+          <button type="button" class="add-btn" id="addContact">+ 添加</button>
+        </div>
+        <div id="contactList">
+          <div class="empty-hint">暂无联系方式，点击"添加"按钮添加</div>
+        </div>
+      </div>
+
+      <button type="submit" class="submit-btn">提交表单</button>
+    </form>
+
+    <div class="result" id="result">
+      <h3>表单数据：</h3>
+      <pre id="resultData"></pre>
+    </div>
+  </div>
+
+  <script>
+    // 计数器
+    let educationCount = 0;
+    let workCount = 0;
+    let contactCount = 0;
+
+    // 获取元素
+    const educationList = document.getElementById('educationList');
+    const workList = document.getElementById('workList');
+    const contactList = document.getElementById('contactList');
+    const form = document.getElementById('dynamicForm');
+    const result = document.getElementById('result');
+    const resultData = document.getElementById('resultData');
+
+    // 添加教育经历
+    document.getElementById('addEducation').addEventListener('click', () => {
+      educationCount++;
+      
+      const html = `
+        <div class="field-group" data-id="${educationCount}">
+          <div class="form-control">
+            <label>学校名称 *</label>
+            <input type="text" name="education[${educationCount}][school]" required>
+          </div>
+          <div class="form-control">
+            <label>专业</label>
+            <input type="text" name="education[${educationCount}][major]">
+          </div>
+          <button type="button" class="remove-btn" onclick="removeField(this)">删除</button>
+        </div>
+      `;
+      
+      if (educationList.querySelector('.empty-hint')) {
+        educationList.innerHTML = '';
+      }
+      
+      educationList.insertAdjacentHTML('beforeend', html);
+    });
+
+    // 添加工作经历
+    document.getElementById('addWork').addEventListener('click', () => {
+      workCount++;
+      
+      const html = `
+        <div class="field-group" data-id="${workCount}">
+          <div class="form-control">
+            <label>公司名称 *</label>
+            <input type="text" name="work[${workCount}][company]" required>
+          </div>
+          <div class="form-control">
+            <label>职位</label>
+            <input type="text" name="work[${workCount}][position]">
+          </div>
+          <button type="button" class="remove-btn" onclick="removeField(this)">删除</button>
+        </div>
+      `;
+      
+      if (workList.querySelector('.empty-hint')) {
+        workList.innerHTML = '';
+      }
+      
+      workList.insertAdjacentHTML('beforeend', html);
+    });
+
+    // 添加联系方式
+    document.getElementById('addContact').addEventListener('click', () => {
+      contactCount++;
+      
+      const html = `
+        <div class="field-group contact-group" data-id="${contactCount}">
+          <div class="form-control">
+            <label>类型 *</label>
+            <select name="contact[${contactCount}][type]" required>
+              <option value="">请选择</option>
+              <option value="phone">电话</option>
+              <option value="email">邮箱</option>
+              <option value="wechat">微信</option>
+              <option value="qq">QQ</option>
+            </select>
+          </div>
+          <div class="form-control">
+            <label>联系方式 *</label>
+            <input type="text" name="contact[${contactCount}][value]" required>
+          </div>
+          <div class="form-control">
+            <label>备注</label>
+            <input type="text" name="contact[${contactCount}][note]">
+          </div>
+          <button type="button" class="remove-btn" onclick="removeField(this)">删除</button>
+        </div>
+      `;
+      
+      if (contactList.querySelector('.empty-hint')) {
+        contactList.innerHTML = '';
+      }
+      
+      contactList.insertAdjacentHTML('beforeend', html);
+    });
+
+    // 删除字段
+    window.removeField = function(btn) {
+      const fieldGroup = btn.closest('.field-group');
+      const parent = fieldGroup.parentElement;
+      
+      // 添加删除动画
+      fieldGroup.classList.add('removing');
+      
+      setTimeout(() => {
+        fieldGroup.remove();
+        
+        // 如果没有字段了，显示提示
+        if (parent.children.length === 0) {
+          const section = parent.id;
+          let hint = '';
+          
+          if (section === 'educationList') {
+            hint = '暂无教育经历，点击"添加"按钮添加';
+          } else if (section === 'workList') {
+            hint = '暂无工作经历，点击"添加"按钮添加';
+          } else if (section === 'contactList') {
+            hint = '暂无联系方式，点击"添加"按钮添加';
+          }
+          
+          parent.innerHTML = `<div class="empty-hint">${hint}</div>`;
+        }
+      }, 300);
+    };
+
+    // 表单提交
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      // 收集表单数据
+      const formData = new FormData(form);
+      
+      // 转换为对象
+      const data = {
+        education: [],
+        work: [],
+        contact: []
+      };
+      
+      // 解析数据
+      for (let [key, value] of formData.entries()) {
+        const match = key.match(/(\w+)\[(\d+)\]\[(\w+)\]/);
+        if (match) {
+          const [, category, index, field] = match;
+          const idx = parseInt(index);
+          
+          if (!data[category][idx]) {
+            data[category][idx] = {};
+          }
+          
+          data[category][idx][field] = value;
+        }
+      }
+      
+      // 过滤空数组
+      data.education = data.education.filter(Boolean);
+      data.work = data.work.filter(Boolean);
+      data.contact = data.contact.filter(Boolean);
+      
+      // 显示结果
+      resultData.textContent = JSON.stringify(data, null, 2);
+      result.style.display = 'block';
+      
+      // 滚动到结果
+      result.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      
+      console.log('表单数据:', data);
+    });
+
+    // 页面加载时自动添加一项（演示）
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        document.getElementById('addEducation').click();
+        document.getElementById('addWork').click();
+        document.getElementById('addContact').click();
+      }, 500);
+    });
+  </script>
+</body>
+</html>
+
