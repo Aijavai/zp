@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>盒模型可视化演示</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      text-align: center;
+      color: white;
+      margin-bottom: 40px;
+      font-size: 36px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .demo-section {
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      margin-bottom: 30px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .section-title {
+      font-size: 24px;
+      color: #333;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 3px solid #667eea;
+    }
+
+    .comparison {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 30px;
+      margin-top: 20px;
+    }
+
+    .box-wrapper {
+      text-align: center;
+    }
+
+    .box-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #667eea;
+      margin-bottom: 15px;
+    }
+
+    .box-info {
+      background: #f8f9fa;
+      padding: 10px;
+      border-radius: 6px;
+      margin-top: 15px;
+      font-size: 13px;
+      line-height: 1.6;
+      text-align: left;
+    }
+
+    .box-info code {
+      background: #e9ecef;
+      padding: 2px 6px;
+      border-radius: 3px;
+      color: #d63384;
+      font-family: 'Courier New', monospace;
+    }
+
+    /* 盒模型演示 */
+    .visual-box {
+      margin: 20px auto;
+      position: relative;
+    }
+
+    /* content-box 演示 */
+    .content-box-demo {
+      box-sizing: content-box;
+      width: 200px;
+      height: 100px;
+      padding: 20px;
+      border: 10px solid #667eea;
+      background-color: #ffd93d;
+      background-clip: content-box;
+      margin: 20px;
+    }
+
+    /* border-box 演示 */
+    .border-box-demo {
+      box-sizing: border-box;
+      width: 200px;
+      height: 100px;
+      padding: 20px;
+      border: 10px solid #764ba2;
+      background-color: #6bcf7f;
+      background-clip: content-box;
+      margin: 20px;
+    }
+
+    /* 分层显示的盒模型 */
+    .layered-box {
+      position: relative;
+      margin: 40px auto;
+      width: 300px;
+    }
+
+    .layer {
+      position: absolute;
+      border: 2px dashed #666;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .layer:hover {
+      z-index: 10;
+      transform: scale(1.05);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .margin-layer {
+      width: 300px;
+      height: 200px;
+      background: rgba(255, 107, 107, 0.2);
+      border-color: #ff6b6b;
+      top: 0;
+      left: 0;
+    }
+
+    .border-layer {
+      width: 260px;
+      height: 160px;
+      background: rgba(76, 209, 55, 0.2);
+      border-color: #4cd137;
+      top: 20px;
+      left: 20px;
+    }
+
+    .padding-layer {
+      width: 220px;
+      height: 120px;
+      background: rgba(255, 195, 18, 0.2);
+      border-color: #ffc312;
+      top: 40px;
+      left: 40px;
+    }
+
+    .content-layer {
+      width: 180px;
+      height: 80px;
+      background: rgba(52, 152, 219, 0.8);
+      border-color: #3498db;
+      color: white;
+      top: 60px;
+      left: 60px;
+    }
+
+    .layer-label {
+      position: absolute;
+      top: 5px;
+      left: 5px;
+      background: white;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+    }
+
+    /* 交互式演示 */
+    .interactive-demo {
+      display: flex;
+      gap: 30px;
+      flex-wrap: wrap;
+      align-items: flex-start;
+    }
+
+    .controls {
+      flex: 1;
+      min-width: 250px;
+    }
+
+    .control-group {
+      margin-bottom: 20px;
+    }
+
+    .control-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: #333;
+    }
+
+    .control-group input[type="range"] {
+      width: 100%;
+      margin-bottom: 5px;
+    }
+
+    .control-group .value-display {
+      font-size: 14px;
+      color: #667eea;
+      font-weight: 600;
+    }
+
+    .preview {
+      flex: 1;
+      min-width: 300px;
+      border: 2px dashed #ccc;
+      padding: 20px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 300px;
+    }
+
+    #interactive-box {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-sizing: border-box;
+    }
+
+    .stats {
+      margin-top: 15px;
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 6px;
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    .stats div {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 5px;
+    }
+
+    .stats strong {
+      color: #667eea;
+    }
+
+    /* 响应式 */
+    @media (max-width: 768px) {
+      .comparison {
+        grid-template-columns: 1fr;
+      }
+
+      .interactive-demo {
+        flex-direction: column;
+      }
+    }
+
+    /* 高亮提示 */
+    .highlight {
+      background: #fff3cd;
+      border-left: 4px solid #ffc107;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 4px;
+    }
+
+    .highlight strong {
+      color: #856404;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📦 CSS 盒模型可视化演示</h1>
+
+    <!-- 基础对比 -->
+    <div class="demo-section">
+      <h2 class="section-title">1. content-box vs border-box 对比</h2>
+      
+      <div class="comparison">
+        <div class="box-wrapper">
+          <div class="box-title">content-box (标准盒模型)</div>
+          <div class="visual-box">
+            <div class="content-box-demo">
+              Content
+            </div>
+          </div>
+          <div class="box-info">
+            <code>box-sizing: content-box;</code><br>
+            <code>width: 200px;</code><br>
+            <code>padding: 20px;</code><br>
+            <code>border: 10px;</code><br>
+            <strong>实际宽度:</strong> 200 + 40 + 20 = <strong>260px</strong>
+          </div>
+        </div>
+
+        <div class="box-wrapper">
+          <div class="box-title">border-box (IE盒模型)</div>
+          <div class="visual-box">
+            <div class="border-box-demo">
+              Content
+            </div>
+          </div>
+          <div class="box-info">
+            <code>box-sizing: border-box;</code><br>
+            <code>width: 200px;</code><br>
+            <code>padding: 20px;</code><br>
+            <code>border: 10px;</code><br>
+            <strong>实际宽度:</strong> <strong>200px</strong><br>
+            <strong>内容宽度:</strong> 200 - 40 - 20 = 140px
+          </div>
+        </div>
+      </div>
+
+      <div class="highlight">
+        <strong>💡 关键区别:</strong> border-box 的 width 包含了 padding 和 border，更符合直觉！
+      </div>
+    </div>
+
+    <!-- 分层演示 -->
+    <div class="demo-section">
+      <h2 class="section-title">2. 盒模型分层结构（悬停查看）</h2>
+      
+      <div class="layered-box">
+        <div class="layer margin-layer">
+          <span class="layer-label">Margin</span>
+        </div>
+        <div class="layer border-layer">
+          <span class="layer-label">Border</span>
+        </div>
+        <div class="layer padding-layer">
+          <span class="layer-label">Padding</span>
+        </div>
+        <div class="layer content-layer">
+          <span class="layer-label">Content</span>
+          内容区域
+        </div>
+      </div>
+
+      <div class="box-info" style="max-width: 500px; margin: 20px auto;">
+        <strong>盒模型四层结构（从外到内）：</strong><br>
+        🔴 <strong>Margin</strong> - 外边距，透明，可为负值<br>
+        🟢 <strong>Border</strong> - 边框，可设置颜色和样式<br>
+        🟡 <strong>Padding</strong> - 内边距，背景色延伸<br>
+        🔵 <strong>Content</strong> - 内容区域，由 width/height 控制
+      </div>
+    </div>
+
+    <!-- 交互式演示 -->
+    <div class="demo-section">
+      <h2 class="section-title">3. 交互式盒模型调试器</h2>
+      
+      <div class="interactive-demo">
+        <div class="controls">
+          <div class="control-group">
+            <label>
+              Width: <span class="value-display" id="width-value">200px</span>
+            </label>
+            <input type="range" id="width-slider" min="100" max="400" value="200">
+          </div>
+
+          <div class="control-group">
+            <label>
+              Padding: <span class="value-display" id="padding-value">20px</span>
+            </label>
+            <input type="range" id="padding-slider" min="0" max="50" value="20">
+          </div>
+
+          <div class="control-group">
+            <label>
+              Border: <span class="value-display" id="border-value">10px</span>
+            </label>
+            <input type="range" id="border-slider" min="0" max="30" value="10">
+          </div>
+
+          <div class="control-group">
+            <label>
+              Margin: <span class="value-display" id="margin-value">20px</span>
+            </label>
+            <input type="range" id="margin-slider" min="0" max="50" value="20">
+          </div>
+
+          <div class="control-group">
+            <label>
+              <input type="checkbox" id="box-sizing-toggle">
+              使用 border-box
+            </label>
+          </div>
+
+          <div class="stats" id="stats"></div>
+        </div>
+
+        <div class="preview">
+          <div id="interactive-box">
+            Content Area
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 实际应用 -->
+    <div class="demo-section">
+      <h2 class="section-title">4. 实际应用场景</h2>
+      
+      <div class="box-info">
+        <strong>为什么推荐使用 border-box？</strong><br><br>
+        
+        <strong>❌ 问题场景 (content-box):</strong><br>
+        <code>
+          .container { width: 1000px; }<br>
+          .col { width: 50%; padding: 20px; border: 10px; }<br>
+          /* 实际宽度 = 500px + 40px + 20px = 560px，超出容器！ */
+        </code><br><br>
+
+        <strong>✅ 解决方案 (border-box):</strong><br>
+        <code>
+          .col { <br>
+          &nbsp;&nbsp;box-sizing: border-box;<br>
+          &nbsp;&nbsp;width: 50%; /* 总宽度就是 500px */<br>
+          &nbsp;&nbsp;padding: 20px;<br>
+          &nbsp;&nbsp;border: 10px;<br>
+          }
+        </code><br><br>
+
+        <strong>🌟 全局最佳实践:</strong><br>
+        <code>
+          html { box-sizing: border-box; }<br>
+          *, *::before, *::after { box-sizing: inherit; }
+        </code>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 交互式演示控制
+    const box = document.getElementById('interactive-box');
+    const widthSlider = document.getElementById('width-slider');
+    const paddingSlider = document.getElementById('padding-slider');
+    const borderSlider = document.getElementById('border-slider');
+    const marginSlider = document.getElementById('margin-slider');
+    const boxSizingToggle = document.getElementById('box-sizing-toggle');
+    const stats = document.getElementById('stats');
+
+    function updateBox() {
+      const width = widthSlider.value;
+      const padding = paddingSlider.value;
+      const border = borderSlider.value;
+      const margin = marginSlider.value;
+      const isBorderBox = boxSizingToggle.checked;
+
+      // 更新显示值
+      document.getElementById('width-value').textContent = width + 'px';
+      document.getElementById('padding-value').textContent = padding + 'px';
+      document.getElementById('border-value').textContent = border + 'px';
+      document.getElementById('margin-value').textContent = margin + 'px';
+
+      // 应用样式
+      box.style.width = width + 'px';
+      box.style.height = '100px';
+      box.style.padding = padding + 'px';
+      box.style.border = border + 'px solid #fff';
+      box.style.margin = margin + 'px';
+      box.style.boxSizing = isBorderBox ? 'border-box' : 'content-box';
+
+      // 计算实际尺寸
+      const paddingTotal = parseInt(padding) * 2;
+      const borderTotal = parseInt(border) * 2;
+      const marginTotal = parseInt(margin) * 2;
+
+      let actualWidth, contentWidth;
+      if (isBorderBox) {
+        actualWidth = parseInt(width);
+        contentWidth = actualWidth - paddingTotal - borderTotal;
+      } else {
+        contentWidth = parseInt(width);
+        actualWidth = contentWidth + paddingTotal + borderTotal;
+      }
+
+      const totalSpace = actualWidth + marginTotal;
+
+      // 更新统计信息
+      stats.innerHTML = `
+        <div><strong>盒模型:</strong> <span>${isBorderBox ? 'border-box' : 'content-box'}</span></div>
+        <div><strong>Content 宽度:</strong> <span>${contentWidth}px</span></div>
+        <div><strong>+ Padding:</strong> <span>${paddingTotal}px (${padding}px × 2)</span></div>
+        <div><strong>+ Border:</strong> <span>${borderTotal}px (${border}px × 2)</span></div>
+        <div style="border-top: 1px solid #ddd; padding-top: 5px; margin-top: 5px;">
+          <strong>= 盒子总宽:</strong> <span style="color: #667eea; font-size: 16px;">${actualWidth}px</span>
+        </div>
+        <div><strong>+ Margin:</strong> <span>${marginTotal}px (${margin}px × 2)</span></div>
+        <div style="border-top: 2px solid #667eea; padding-top: 5px; margin-top: 5px;">
+          <strong>= 占据空间:</strong> <span style="color: #764ba2; font-size: 16px; font-weight: bold;">${totalSpace}px</span>
+        </div>
+      `;
+    }
+
+    // 事件监听
+    widthSlider.addEventListener('input', updateBox);
+    paddingSlider.addEventListener('input', updateBox);
+    borderSlider.addEventListener('input', updateBox);
+    marginSlider.addEventListener('input', updateBox);
+    boxSizingToggle.addEventListener('change', updateBox);
+
+    // 初始化
+    updateBox();
+  </script>
+</body>
+</html>
+

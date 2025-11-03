@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BFC 应用场景演示</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 40px 20px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      text-align: center;
+      color: white;
+      margin-bottom: 40px;
+      font-size: 36px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .demo-card {
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      margin-bottom: 30px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .card-title {
+      font-size: 24px;
+      color: #667eea;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 3px solid #667eea;
+    }
+
+    .info-box {
+      background: #e3f2fd;
+      border-left: 4px solid #2196f3;
+      padding: 15px;
+      margin: 15px 0;
+      border-radius: 4px;
+      line-height: 1.8;
+    }
+
+    .code-box {
+      background: #282c34;
+      color: #abb2bf;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 15px 0;
+      overflow-x: auto;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .comparison {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin: 20px 0;
+    }
+
+    .comparison-item {
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 15px;
+      background: #fafafa;
+    }
+
+    .comparison-title {
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 15px;
+      padding: 8px;
+      border-radius: 6px;
+    }
+
+    .problem {
+      background: #ffebee;
+      color: #c62828;
+    }
+
+    .solution {
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
+
+    /* 场景1: 清除浮动 */
+    .float-container-problem {
+      background: #fff9c4;
+      border: 3px solid #ffc107;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+
+    .float-container-solution {
+      background: #c8e6c9;
+      border: 3px solid #4caf50;
+      padding: 10px;
+      overflow: hidden; /* BFC */
+    }
+
+    .float-box {
+      float: left;
+      width: 100px;
+      height: 100px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      margin: 10px;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      border-radius: 8px;
+    }
+
+    /* 场景2: 防止 margin 塌陷 */
+    .parent-problem {
+      background: #ffebee;
+      border: 3px dashed #f44336;
+      margin: 20px 0;
+      min-height: 150px;
+    }
+
+    .parent-solution {
+      background: #e8f5e9;
+      border: 3px solid #4caf50;
+      margin: 20px 0;
+      overflow: hidden; /* BFC */
+      min-height: 150px;
+    }
+
+    .child-with-margin {
+      background: #bbdefb;
+      border: 2px solid #2196f3;
+      padding: 15px;
+      margin: 20px;
+      border-radius: 6px;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    /* 场景3: 自适应两栏布局 */
+    .layout-container {
+      background: #f5f5f5;
+      padding: 15px;
+      border-radius: 8px;
+    }
+
+    .sidebar {
+      float: left;
+      width: 200px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .main-problem {
+      background: #fff9c4;
+      border: 2px dashed #ffc107;
+      padding: 20px;
+      min-height: 150px;
+      border-radius: 8px;
+    }
+
+    .main-solution {
+      background: #c8e6c9;
+      border: 2px solid #4caf50;
+      padding: 20px;
+      overflow: hidden; /* BFC */
+      min-height: 150px;
+      border-radius: 8px;
+    }
+
+    /* 场景4: 防止文字环绕 */
+    .text-wrap-demo {
+      background: #f5f5f5;
+      padding: 15px;
+      border-radius: 8px;
+      line-height: 1.8;
+    }
+
+    .float-image {
+      float: left;
+      width: 150px;
+      height: 150px;
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      margin: 0 15px 15px 0;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
+    }
+
+    .text-content-problem {
+      color: #666;
+    }
+
+    .text-content-solution {
+      overflow: hidden; /* BFC */
+      background: #e3f2fd;
+      padding: 15px;
+      border-radius: 6px;
+      color: #666;
+    }
+
+    .clear {
+      clear: both;
+    }
+
+    /* BFC 特性展示 */
+    .feature-list {
+      background: #fff;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 20px 0;
+    }
+
+    .feature-list li {
+      padding: 10px;
+      margin: 10px 0;
+      background: #f8f9fa;
+      border-left: 4px solid #667eea;
+      border-radius: 4px;
+      line-height: 1.6;
+    }
+
+    .trigger-methods {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 15px;
+      margin: 20px 0;
+    }
+
+    .trigger-item {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: 600;
+      transition: transform 0.3s ease;
+    }
+
+    .trigger-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    /* 高亮代码 */
+    .highlight {
+      color: #e5c07b;
+    }
+    .keyword {
+      color: #c678dd;
+    }
+    .value {
+      color: #98c379;
+    }
+    .comment {
+      color: #5c6370;
+      font-style: italic;
+    }
+
+    @media (max-width: 768px) {
+      .comparison {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        width: 100%;
+        margin-bottom: 15px;
+        float: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎯 BFC (块级格式化上下文) 应用演示</h1>
+
+    <!-- BFC 介绍 -->
+    <div class="demo-card">
+      <h2 class="card-title">📖 什么是 BFC？</h2>
+      
+      <div class="info-box">
+        <strong>BFC (Block Formatting Context)</strong> = 块级格式化上下文<br><br>
+        
+        BFC 是一个独立的渲染区域，内部元素的布局不会影响外部元素，外部元素也不会影响内部元素。
+      </div>
+
+      <div class="feature-list">
+        <h3 style="color: #667eea; margin-bottom: 15px;">BFC 的特性：</h3>
+        <ul style="list-style: none;">
+          <li>✅ 内部的盒子会在垂直方向一个接一个地放置</li>
+          <li>✅ 垂直方向的距离由 margin 决定，同一 BFC 内相邻元素 margin 会合并</li>
+          <li>✅ BFC 的区域不会与浮动元素重叠</li>
+          <li>✅ BFC 是一个独立容器，内外元素互不影响</li>
+          <li>✅ 计算 BFC 高度时，浮动元素也参与计算</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 触发方式 -->
+    <div class="demo-card">
+      <h2 class="card-title">🔧 如何触发 BFC？</h2>
+      
+      <div class="trigger-methods">
+        <div class="trigger-item">float: left/right</div>
+        <div class="trigger-item">position: absolute/fixed</div>
+        <div class="trigger-item">display: inline-block</div>
+        <div class="trigger-item">display: flex</div>
+        <div class="trigger-item">display: grid</div>
+        <div class="trigger-item">display: flow-root</div>
+        <div class="trigger-item">overflow: hidden</div>
+        <div class="trigger-item">overflow: auto</div>
+        <div class="trigger-item">overflow: scroll</div>
+      </div>
+
+      <div class="code-box">
+<span class="comment">/* 最推荐的 BFC 触发方式 */</span>
+<span class="keyword">.container</span> {
+  <span class="highlight">overflow</span>: <span class="value">hidden</span>;     <span class="comment">/* 简单实用 */</span>
+  <span class="comment">/* 或 */</span>
+  <span class="highlight">display</span>: <span class="value">flow-root</span>;    <span class="comment">/* 专门用于创建 BFC (现代) */</span>
+  <span class="comment">/* 或 */</span>
+  <span class="highlight">display</span>: <span class="value">flex</span>;         <span class="comment">/* 顺带创建 flex 布局 */</span>
+}
+      </div>
+    </div>
+
+    <!-- 应用1: 清除浮动 -->
+    <div class="demo-card">
+      <h2 class="card-title">应用 1: 清除浮动（包含浮动元素）</h2>
+      
+      <div class="comparison">
+        <div class="comparison-item">
+          <div class="comparison-title problem">❌ 问题：父元素高度塌陷</div>
+          <div class="float-container-problem">
+            <div class="float-box">Float</div>
+            <div class="float-box">Float</div>
+          </div>
+          <p style="margin-top: 10px; font-size: 13px; color: #666;">
+            父元素高度为 0，浮动子元素溢出
+          </p>
+        </div>
+
+        <div class="comparison-item">
+          <div class="comparison-title solution">✅ 解决：overflow: hidden</div>
+          <div class="float-container-solution">
+            <div class="float-box">Float</div>
+            <div class="float-box">Float</div>
+          </div>
+          <p style="margin-top: 10px; font-size: 13px; color: #666;">
+            BFC 包含浮动元素，父元素有高度
+          </p>
+        </div>
+      </div>
+
+      <div class="code-box">
+<span class="comment">/* ❌ 问题代码 */</span>
+<span class="keyword">.parent</span> {
+  <span class="highlight">background</span>: <span class="value">#fff</span>;
+  <span class="comment">/* 高度塌陷，看不到背景色 */</span>
+}
+<span class="keyword">.child</span> {
+  <span class="highlight">float</span>: <span class="value">left</span>;
+}
+
+<span class="comment">/* ✅ 解决方案 */</span>
+<span class="keyword">.parent</span> {
+  <span class="highlight">overflow</span>: <span class="value">hidden</span>;   <span class="comment">/* 创建 BFC，包含浮动子元素 */</span>
+  <span class="highlight">background</span>: <span class="value">#fff</span>;
+}
+      </div>
+    </div>
+
+    <!-- 应用2: 防止 margin 塌陷 -->
+    <div class="demo-card">
+      <h2 class="card-title">应用 2: 防止 Margin 塌陷</h2>
+      
+      <div class="comparison">
+        <div class="comparison-item">
+          <div class="comparison-title problem">❌ 问题：子元素 margin 溢出</div>
+          <div class="parent-problem">
+            <div style="padding: 10px; font-weight: 600; color: #f44336;">Parent</div>
+            <div class="child-with-margin">
+              Child<br>
+              <small>margin: 20px</small>
+            </div>
+          </div>
+          <p style="font-size: 13px; color: #666;">
+            子元素的 margin-top 溢出到父元素外面
+          </p>
+        </div>
+
+        <div class="comparison-item">
+          <div class="comparison-title solution">✅ 解决：overflow: hidden</div>
+          <div class="parent-solution">
+            <div style="padding: 10px; font-weight: 600; color: #4caf50;">Parent (BFC)</div>
+            <div class="child-with-margin">
+              Child<br>
+              <small>margin: 20px</small>
+            </div>
+          </div>
+          <p style="font-size: 13px; color: #666;">
+            BFC 阻止 margin 塌陷，内外元素互不影响
+          </p>
+        </div>
+      </div>
+
+      <div class="code-box">
+<span class="comment">/* ❌ 问题代码 */</span>
+<span class="keyword">.parent</span> {
+  <span class="highlight">background</span>: <span class="value">#f5f5f5</span>;
+}
+<span class="keyword">.child</span> {
+  <span class="highlight">margin-top</span>: <span class="value">20px</span>;  <span class="comment">/* 会溢出到 parent 外面 */</span>
+}
+
+<span class="comment">/* ✅ 解决方案 */</span>
+<span class="keyword">.parent</span> {
+  <span class="highlight">overflow</span>: <span class="value">hidden</span>;    <span class="comment">/* 创建 BFC */</span>
+  <span class="highlight">background</span>: <span class="value">#f5f5f5</span>;
+}
+      </div>
+    </div>
+
+    <!-- 应用3: 自适应两栏布局 -->
+    <div class="demo-card">
+      <h2 class="card-title">应用 3: 自适应两栏布局</h2>
+      
+      <div class="comparison">
+        <div class="comparison-item">
+          <div class="comparison-title problem">❌ 问题：文字被浮动元素覆盖</div>
+          <div class="layout-container">
+            <div class="sidebar">侧边栏<br>200px</div>
+            <div class="main-problem">
+              主内容区域被浮动的侧边栏部分覆盖了。这不是我们想要的效果。
+            </div>
+            <div class="clear"></div>
+          </div>
+        </div>
+
+        <div class="comparison-item">
+          <div class="comparison-title solution">✅ 解决：overflow: hidden</div>
+          <div class="layout-container">
+            <div class="sidebar">侧边栏<br>200px</div>
+            <div class="main-solution">
+              主内容区域创建了 BFC，不会与浮动元素重叠，自动适应剩余宽度。完美！
+            </div>
+            <div class="clear"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-box">
+<span class="comment">/* 固定宽度侧边栏 */</span>
+<span class="keyword">.sidebar</span> {
+  <span class="highlight">float</span>: <span class="value">left</span>;
+  <span class="highlight">width</span>: <span class="value">200px</span>;
+}
+
+<span class="comment">/* 自适应主内容 */</span>
+<span class="keyword">.main</span> {
+  <span class="highlight">overflow</span>: <span class="value">hidden</span>;   <span class="comment">/* 创建 BFC，不与浮动元素重叠 */</span>
+  <span class="comment">/* 自动占据剩余空间 */</span>
+}
+      </div>
+
+      <div class="info-box">
+        <strong>💡 原理:</strong> BFC 的区域不会与浮动元素重叠，所以主内容会自动避开浮动的侧边栏，占据剩余空间。
+      </div>
+    </div>
+
+    <!-- 应用4: 防止文字环绕 -->
+    <div class="demo-card">
+      <h2 class="card-title">应用 4: 防止文字环绕浮动元素</h2>
+      
+      <div class="comparison">
+        <div class="comparison-item">
+          <div class="comparison-title problem">❌ 默认：文字环绕</div>
+          <div class="text-wrap-demo">
+            <div class="float-image">Image</div>
+            <div class="text-content-problem">
+              这是一段文字内容。默认情况下，文字会环绕浮动的图片。
+              这是一段文字内容。默认情况下，文字会环绕浮动的图片。
+              这是一段文字内容。默认情况下，文字会环绕浮动的图片。
+            </div>
+            <div class="clear"></div>
+          </div>
+        </div>
+
+        <div class="comparison-item">
+          <div class="comparison-title solution">✅ BFC：不环绕</div>
+          <div class="text-wrap-demo">
+            <div class="float-image">Image</div>
+            <div class="text-content-solution">
+              创建 BFC 后，文字内容不会环绕浮动元素，而是形成独立的块。
+              创建 BFC 后，文字内容不会环绕浮动元素，而是形成独立的块。
+            </div>
+            <div class="clear"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-box">
+<span class="keyword">.image</span> {
+  <span class="highlight">float</span>: <span class="value">left</span>;
+}
+
+<span class="keyword">.text-content</span> {
+  <span class="highlight">overflow</span>: <span class="value">hidden</span>;   <span class="comment">/* 创建 BFC，不与浮动元素重叠 */</span>
+}
+      </div>
+    </div>
+
+    <!-- 总结 -->
+    <div class="demo-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+      <h2 style="color: white; border-bottom-color: white;">📝 BFC 应用总结</h2>
+      
+      <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 8px; margin: 20px 0;">
+        <h3 style="margin-bottom: 15px;">🎯 BFC 能解决的问题：</h3>
+        <ul style="line-height: 2; margin-left: 20px;">
+          <li>✅ <strong>清除浮动</strong> - 让父元素包含浮动子元素</li>
+          <li>✅ <strong>防止 margin 塌陷</strong> - 阻止父子元素 margin 合并</li>
+          <li>✅ <strong>自适应布局</strong> - 实现左固定右自适应的两栏布局</li>
+          <li>✅ <strong>防止文字环绕</strong> - 创建独立的文字块</li>
+        </ul>
+      </div>
+
+      <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 8px;">
+        <h3 style="margin-bottom: 15px;">💡 推荐的 BFC 触发方式：</h3>
+        <ul style="line-style: none; margin-left: 20px; line-height: 2;">
+          <li><code style="background: rgba(0,0,0,0.2); padding: 2px 8px; border-radius: 4px;">overflow: hidden</code> - 最常用，简单有效</li>
+          <li><code style="background: rgba(0,0,0,0.2); padding: 2px 8px; border-radius: 4px;">display: flow-root</code> - 专门用于创建 BFC（现代浏览器）</li>
+          <li><code style="background: rgba(0,0,0,0.2); padding: 2px 8px; border-radius: 4px;">display: flex/grid</code> - 顺带创建布局</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+

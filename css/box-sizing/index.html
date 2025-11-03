@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CSS 盒模型大厂面试专题</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      color: white;
+      margin-bottom: 50px;
+    }
+
+    .header h1 {
+      font-size: 48px;
+      margin-bottom: 15px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .header p {
+      font-size: 20px;
+      opacity: 0.9;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      margin-bottom: 40px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+    }
+
+    .card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    .card-icon {
+      font-size: 48px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .card-title {
+      font-size: 24px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+
+    .card-description {
+      color: #666;
+      line-height: 1.6;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .card-link {
+      display: block;
+      text-align: center;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: opacity 0.3s ease;
+    }
+
+    .card-link:hover {
+      opacity: 0.9;
+    }
+
+    .features {
+      background: white;
+      border-radius: 12px;
+      padding: 40px;
+      margin-bottom: 40px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .features h2 {
+      font-size: 32px;
+      color: #667eea;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .feature-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    .feature-item {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 8px;
+      border-left: 4px solid #667eea;
+    }
+
+    .feature-item h3 {
+      color: #667eea;
+      margin-bottom: 10px;
+      font-size: 18px;
+    }
+
+    .feature-item p {
+      color: #666;
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    .quick-start {
+      background: white;
+      border-radius: 12px;
+      padding: 40px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .quick-start h2 {
+      font-size: 32px;
+      color: #667eea;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .steps {
+      display: grid;
+      gap: 20px;
+    }
+
+    .step {
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      padding: 25px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .step-number {
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    .step-content h3 {
+      font-size: 20px;
+      color: #333;
+      margin-bottom: 8px;
+    }
+
+    .step-content p {
+      color: #666;
+      line-height: 1.6;
+    }
+
+    .footer {
+      text-align: center;
+      color: white;
+      margin-top: 50px;
+      padding-top: 30px;
+      border-top: 2px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .footer p {
+      margin: 10px 0;
+      opacity: 0.9;
+    }
+
+    @media (max-width: 768px) {
+      .header h1 {
+        font-size: 36px;
+      }
+
+      .card-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <h1>📦 CSS 盒模型</h1>
+      <p>大厂前端面试完整知识体系</p>
+    </div>
+
+    <!-- Resource Cards -->
+    <div class="card-grid">
+      <div class="card" onclick="window.location.href='interview-summary.md'">
+        <div class="card-icon">📚</div>
+        <h3 class="card-title">理论知识总结</h3>
+        <p class="card-description">
+          完整的盒模型理论知识、BFC、margin 合并等核心概念，包含 15+ 道高频面试题及详细解答
+        </p>
+        <a href="interview-summary.md" class="card-link">开始学习</a>
+      </div>
+
+      <div class="card" onclick="window.location.href='1.html'">
+        <div class="card-icon">🎯</div>
+        <h3 class="card-title">基础问题演示</h3>
+        <p class="card-description">
+          从实际问题出发，演示 content-box 和 border-box 的区别，理解为什么需要盒模型
+        </p>
+        <a href="1.html" class="card-link">查看演示</a>
+      </div>
+
+      <div class="card" onclick="window.location.href='box-model-demo.html'">
+        <div class="card-icon">🔍</div>
+        <h3 class="card-title">盒模型可视化</h3>
+        <p class="card-description">
+          交互式盒模型调试器，实时调整 width、padding、border、margin，理解盒模型计算
+        </p>
+        <a href="box-model-demo.html" class="card-link">开始探索</a>
+      </div>
+
+      <div class="card" onclick="window.location.href='margin-collapse.html'">
+        <div class="card-icon">⚠️</div>
+        <h3 class="card-title">Margin 合并/塌陷</h3>
+        <p class="card-description">
+          深入理解 margin 合并的三种场景，掌握所有解决方案，交互式演示帮助记忆
+        </p>
+        <a href="margin-collapse.html" class="card-link">深入学习</a>
+      </div>
+
+      <div class="card" onclick="window.location.href='bfc-demo.html'">
+        <div class="card-icon">🛠️</div>
+        <h3 class="card-title">BFC 应用场景</h3>
+        <p class="card-description">
+          BFC 的四大应用：清除浮动、防止塌陷、自适应布局、防止文字环绕，实战演示
+        </p>
+        <a href="bfc-demo.html" class="card-link">实战应用</a>
+      </div>
+
+      <div class="card" onclick="window.location.href='layout-examples.html'">
+        <div class="card-icon">🎨</div>
+        <h3 class="card-title">布局实战案例</h3>
+        <p class="card-description">
+          8 种常见布局方案：居中、两栏、三栏、圣杯、卡片网格等，代码可直接复用
+        </p>
+        <a href="layout-examples.html" class="card-link">查看案例</a>
+      </div>
+    </div>
+
+    <!-- Features -->
+    <div class="features">
+      <h2>🌟 特色功能</h2>
+      <div class="feature-list">
+        <div class="feature-item">
+          <h3>📖 系统化知识</h3>
+          <p>从基础到进阶，涵盖盒模型所有考点，结构清晰，易于理解</p>
+        </div>
+        <div class="feature-item">
+          <h3>💻 交互式演示</h3>
+          <p>可视化展示，实时调整参数，边学边练，加深理解</p>
+        </div>
+        <div class="feature-item">
+          <h3>🎯 面试导向</h3>
+          <p>总结大厂高频面试题，提供标准答案和详细解析</p>
+        </div>
+        <div class="feature-item">
+          <h3>🚀 实战案例</h3>
+          <p>真实布局场景，代码可复用，学完即用</p>
+        </div>
+        <div class="feature-item">
+          <h3>📱 响应式设计</h3>
+          <p>所有示例支持移动端，随时随地学习</p>
+        </div>
+        <div class="feature-item">
+          <h3>🎨 精美 UI</h3>
+          <p>渐变配色，现代设计，提升学习体验</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Start -->
+    <div class="quick-start">
+      <h2>🚀 快速开始</h2>
+      <div class="steps">
+        <div class="step">
+          <div class="step-number">1</div>
+          <div class="step-content">
+            <h3>理论学习</h3>
+            <p>阅读 <strong>interview-summary.md</strong>，掌握盒模型核心概念、BFC、margin 合并等理论知识</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-number">2</div>
+          <div class="step-content">
+            <h3>可视化理解</h3>
+            <p>打开 <strong>box-model-demo.html</strong>，通过交互式演示深入理解盒模型的计算规则</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-number">3</div>
+          <div class="step-content">
+            <h3>专题突破</h3>
+            <p>学习 <strong>margin-collapse.html</strong> 和 <strong>bfc-demo.html</strong>，掌握难点和易错点</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-number">4</div>
+          <div class="step-content">
+            <h3>实战练习</h3>
+            <p>查看 <strong>layout-examples.html</strong>，学习各种布局方案，动手实践</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-number">5</div>
+          <div class="step-content">
+            <h3>面试准备</h3>
+            <p>重点复习 <strong>interview-summary.md</strong> 中的 15 道高频面试题，准备面试</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <p><strong>💡 学习建议</strong></p>
+      <p>建议每天学习 1-2 个专题，边学边练，3-5 天即可掌握盒模型全部知识点</p>
+      <p style="margin-top: 30px;">祝你面试顺利！🎉</p>
+      <p style="margin-top: 20px; font-size: 14px;">© 2025 CSS 盒模型大厂面试专题</p>
+    </div>
+  </div>
+</body>
+</html>
+
