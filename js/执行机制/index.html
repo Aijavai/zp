@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JS执行机制 - 可视化演示</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+    }
+
+    header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      opacity: 0.9;
+      font-size: 1.1em;
+    }
+
+    .main-content {
+      display: flex;
+      height: calc(100vh - 200px);
+    }
+
+    .left-panel {
+      flex: 1;
+      padding: 20px;
+      border-right: 2px solid #e0e0e0;
+      overflow-y: auto;
+    }
+
+    .right-panel {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      background: #f8f9fa;
+    }
+
+    .section {
+      margin-bottom: 30px;
+    }
+
+    .section h2 {
+      color: #667eea;
+      margin-bottom: 15px;
+      font-size: 1.5em;
+      border-bottom: 2px solid #667eea;
+      padding-bottom: 10px;
+    }
+
+    .queue-container {
+      background: white;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .queue-title {
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #764ba2;
+      font-size: 1.1em;
+    }
+
+    .queue-items {
+      min-height: 60px;
+      border: 2px dashed #ddd;
+      border-radius: 8px;
+      padding: 10px;
+    }
+
+    .queue-item {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 10px 15px;
+      border-radius: 5px;
+      margin: 5px 0;
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .macrotask-item {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    }
+
+    .microtask-item {
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    }
+
+    .output-area {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      padding: 20px;
+      border-radius: 10px;
+      font-family: 'Courier New', monospace;
+      height: 400px;
+      overflow-y: auto;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .output-line {
+      margin: 5px 0;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .test-btn {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    }
+
+    .clear-btn {
+      background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+    }
+
+    .info-box {
+      background: #e3f2fd;
+      border-left: 4px solid #2196f3;
+      padding: 15px;
+      margin: 15px 0;
+      border-radius: 5px;
+    }
+
+    .call-stack {
+      background: white;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .stack-frame {
+      background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+      padding: 10px;
+      margin: 5px 0;
+      border-radius: 5px;
+      border-left: 4px solid #667eea;
+      animation: slideIn 0.3s ease;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🚀 JavaScript 执行机制可视化</h1>
+      <p class="subtitle">理解事件循环、宏任务、微任务</p>
+    </header>
+
+    <div class="main-content">
+      <!-- 左侧面板 -->
+      <div class="left-panel">
+        <div class="section">
+          <h2>📋 测试用例</h2>
+          <div class="controls">
+            <button onclick="runTest1()">测试1: 基础</button>
+            <button onclick="runTest2()" class="test-btn">测试2: async/await</button>
+            <button onclick="runTest3()" class="test-btn">测试3: 复杂混合</button>
+            <button onclick="runTest4()" class="test-btn">测试4: Promise链</button>
+            <button onclick="clearAll()" class="clear-btn">清空</button>
+          </div>
+
+          <div class="info-box">
+            <strong>💡 提示：</strong>
+            <ul style="margin-left: 20px; margin-top: 10px;">
+              <li>点击测试按钮运行不同的测试用例</li>
+              <li>观察右侧的任务队列和输出</li>
+              <li>理解宏任务和微任务的执行顺序</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="call-stack">
+            <div class="queue-title">📚 调用栈 (Call Stack)</div>
+            <div id="call-stack" class="queue-items">
+              <div style="color: #999;">空闲中...</div>
+            </div>
+          </div>
+
+          <div class="queue-container">
+            <div class="queue-title">🔴 宏任务队列 (Macrotask Queue)</div>
+            <div id="macrotask-queue" class="queue-items">
+              <div style="color: #999;">暂无宏任务</div>
+            </div>
+          </div>
+
+          <div class="queue-container">
+            <div class="queue-title">🔵 微任务队列 (Microtask Queue)</div>
+            <div id="microtask-queue" class="queue-items">
+              <div style="color: #999;">暂无微任务</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 右侧面板 -->
+      <div class="right-panel">
+        <div class="section">
+          <h2>📺 控制台输出</h2>
+          <div class="output-area" id="output"></div>
+        </div>
+
+        <div class="section">
+          <h2>📖 执行规则</h2>
+          <div class="info-box">
+            <h3 style="margin-bottom: 10px;">事件循环执行顺序：</h3>
+            <ol style="margin-left: 20px; line-height: 1.8;">
+              <li>执行同步代码</li>
+              <li>清空所有微任务</li>
+              <li>执行一个宏任务</li>
+              <li>清空所有微任务</li>
+              <li>重复步骤3-4</li>
+            </ol>
+          </div>
+          <div class="info-box" style="background: #fff3e0; border-color: #ff9800; margin-top: 15px;">
+            <h3 style="margin-bottom: 10px;">记忆口诀：</h3>
+            <p style="font-weight: bold; color: #f57c00;">同步先行，微任务随，一宏带队，微任又随</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let outputDiv = document.getElementById('output');
+
+    function log(message, color = '#d4d4d4') {
+      const line = document.createElement('div');
+      line.className = 'output-line';
+      line.style.color = color;
+      line.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+      outputDiv.appendChild(line);
+      outputDiv.scrollTop = outputDiv.scrollHeight;
+    }
+
+    function clearAll() {
+      outputDiv.innerHTML = '';
+      document.getElementById('call-stack').innerHTML = '<div style="color: #999;">空闲中...</div>';
+      document.getElementById('macrotask-queue').innerHTML = '<div style="color: #999;">暂无宏任务</div>';
+      document.getElementById('microtask-queue').innerHTML = '<div style="color: #999;">暂无微任务</div>';
+    }
+
+    // 测试1: 基础事件循环
+    function runTest1() {
+      log('=== 测试1: 基础事件循环 ===', '#4fc3f7');
+      
+      log('1 - 同步代码', '#81c784');
+
+      setTimeout(() => {
+        log('2 - 宏任务(setTimeout)', '#f06292');
+      }, 0);
+
+      Promise.resolve().then(() => {
+        log('3 - 微任务(Promise)', '#4fc3f7');
+      });
+
+      log('4 - 同步代码', '#81c784');
+      log('预期输出: 1 4 3 2', '#ffd54f');
+    }
+
+    // 测试2: async/await
+    function runTest2() {
+      log('=== 测试2: async/await ===', '#4fc3f7');
+
+      async function async1() {
+        log('async1 start', '#81c784');
+        await async2();
+        log('async1 end', '#4fc3f7');
+      }
+
+      async function async2() {
+        log('async2', '#81c784');
+      }
+
+      log('script start', '#81c784');
+
+      setTimeout(function() {
+        log('setTimeout', '#f06292');
+      }, 0);
+
+      async1();
+
+      new Promise(function(resolve) {
+        log('promise1', '#81c784');
+        resolve();
+      }).then(function() {
+        log('promise2', '#4fc3f7');
+      });
+
+      log('script end', '#81c784');
+    }
+
+    // 测试3: 复杂混合
+    function runTest3() {
+      log('=== 测试3: 复杂混合 ===', '#4fc3f7');
+
+      log('1', '#81c784');
+
+      setTimeout(() => {
+        log('2', '#f06292');
+        Promise.resolve().then(() => {
+          log('3', '#4fc3f7');
+        });
+      }, 0);
+
+      new Promise((resolve) => {
+        log('4', '#81c784');
+        resolve();
+      }).then(() => {
+        log('5', '#4fc3f7');
+        setTimeout(() => {
+          log('6', '#f06292');
+        }, 0);
+      }).then(() => {
+        log('7', '#4fc3f7');
+      });
+
+      setTimeout(() => {
+        log('8', '#f06292');
+        Promise.resolve().then(() => {
+          log('9', '#4fc3f7');
+        });
+      }, 0);
+
+      log('10', '#81c784');
+      log('预期输出: 1 4 10 5 7 2 3 8 9 6', '#ffd54f');
+    }
+
+    // 测试4: Promise链
+    function runTest4() {
+      log('=== 测试4: Promise链式调用 ===', '#4fc3f7');
+
+      Promise.resolve()
+        .then(() => {
+          log('1', '#4fc3f7');
+          return Promise.resolve('2');
+        })
+        .then((res) => {
+          log(res, '#4fc3f7');
+        });
+
+      Promise.resolve()
+        .then(() => {
+          log('3', '#4fc3f7');
+          return '4';
+        })
+        .then((res) => {
+          log(res, '#4fc3f7');
+        });
+
+      log('预期输出: 1 3 2 4', '#ffd54f');
+    }
+
+    // 初始化提示
+    log('👋 欢迎使用JS执行机制可视化工具！', '#4fc3f7');
+    log('点击左侧按钮运行测试用例', '#81c784');
+  </script>
+</body>
+</html>
+
