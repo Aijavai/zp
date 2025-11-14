@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        // promise 是es6 提供的异步编程解决方案，优于回调函数（事件监听也是回调函数）
+        // promise 是一个类 实例 有then，catch, finally 方法 
+        // Promise 一定接收一个立即执行的函数excutor
+        function getJSON(url) {
+            // 返回promise 实例，Promise 类里定义了then 方法
+            const p = new Promise((resolve, reject) => {
+                // excutor 执行器函数 这是同步代码 立即执行
+                // 将耗时的异步任务放在里面
+                const xhr = new XMLHttpRequest();
+                xhr.open('GET', url, true);
+                xhr.send();
+                xhr.onreadystatechange = function() {
+                    if(xhr.readyState === 4 && xhr.status === 200) {
+                        const data = JSON.parse(xhr.responseText);
+                        resolve(data); // 成功
+                    }
+                }
+            });
+            return p;
+        }
+
+        getJSON('https://api.github.com/users/shunwuyu')
+        .then((data) => {
+            console.log(data);
+        })
+        
+    </script>
+</body>
+</html>

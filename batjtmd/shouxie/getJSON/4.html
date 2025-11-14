@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>手写sleep 函数</title>
+</head>
+<body>
+    <script>
+        function sleep(n) {
+            const p = new Promise((resolve) => {
+                setTimeout(resolve, n);
+            });
+            return p;
+        }
+        sleep(3000)
+        .then(() => {
+            console.log('/////////')
+        })
+    </script>
+</body>
+</html>
