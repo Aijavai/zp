@@ -1,0 +1,13 @@
+const node = {
+    loc: {
+        start: {
+            line: 1,
+            column: 5
+        }
+    }
+};
+
+let { loc, loc: {start}} = node;
+
+console.log(loc);
+console.log(start);

@@ -4,7 +4,7 @@
 ## 解构 
 - 一次性声明多个变量
 
-## reset 运算符 ...
+## rest 运算符 ...
 
 ## 对象属性简写语法(Shorthand Property)
 const sex = 'boy';
