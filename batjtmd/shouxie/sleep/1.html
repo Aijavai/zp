@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms))
+        }
+
+        console.log('开始');
+        sleep(3000)
+        .then(() => {
+            console.log('sleep 结束')
+        })
+        console.log('3秒后执行')
+    </script>
+</body>
+</html>
