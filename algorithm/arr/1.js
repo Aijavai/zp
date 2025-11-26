@@ -8,5 +8,5 @@ const arr1 = new Array();  // 创建一个空数组 构造函数 类似于 const
 arr1.push(1, 2, 3, 4, 5);
 console.log(arr1);
 
-const arr2 = (new Array(5)).fill(0, 1, 2, 3, 4, 5);
+const arr2 = (new Array(5)).fill(0, 1, 2);// fill(value, start, end)
 console.log(arr2);
