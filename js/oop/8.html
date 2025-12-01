@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>prototype 继承</title>
+</head>
+<body>
+    <script>
+        function Animal() {
+            this.species = "动物";
+    
+        }
+        Animal.prototype = {
+            sayHi: function() {
+                console.log("nanananannaan")
+            }
+        }
+
+        function Cat(name, color) {
+            // 默认返回一个对象 this
+            console.log(this);
+            // apply 用于指定函数运行时this 指向，被绑定了
+            // 第一个参数就是指定的this 指向
+            Animal.apply(this, arguments); // 函数运行，指定函数内部的this 是cat实例
+            this.name = name;
+            this.color = color;
+        }
+        Cat.prototype = new Animal();   // 继承方法
+        const cat = new Cat("tom", "黑");
+        cat.sayHi();
+        console.log(cat);
+    </script>
+</body>
+</html>
