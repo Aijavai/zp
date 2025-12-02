@@ -43,7 +43,6 @@ EditInPlace.prototype = {
         this.fieldElement.type = "text";
         this.fieldElement.value = this.value;
         this.containerElement.appendChild(this.fieldElement);
-        this.parentElement.appendChild(this.containerElement);
         
         // 按钮
         this.saveButton = document.createElement("input");
@@ -56,6 +55,8 @@ EditInPlace.prototype = {
         this.cancelButton.type = "button";
         this.cancelButton.value = "取消";
         this.containerElement.appendChild(this.cancelButton);
+
+        this.parentElement.appendChild(this.containerElement);
 
         this.convertToText(); // 切换到文本显示状态
     },
@@ -90,9 +91,13 @@ EditInPlace.prototype = {
         );
     },
     save: function() {
-        var value = this.fieldElement.value;
+        var value = this.fieldElement.value.trim();
+        if (value === '') {
+            this.value = '这个家伙很懒，什么都没有留下';
+        } else {
+            this.value = value;
+        }
         // fetch 后端存储
-        this.value = value;
         this.staticElement.innerHTML = value;
         this.convertToText();
     },
