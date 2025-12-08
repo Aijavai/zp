@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>利用空对象作为中介</title>
+</head>
+<body>
+<script>
+function Animal(name, age) {
+  this.name = name;
+  this.age = age;
+} 
+Animal.prototype.species = '动物';
+function Cat(name, age, color) {
+  //{} 空对象 <- this
+  // 构造函数式继承
+  // 手动指定
+  // Animal.call(this, name, age);
+  Animal.apply(this, [name, age]); // 数组传递
+  console.log(this, '////');
+}
+
+var F = function() {}; // 空的函数 
+F.prototype = Animal.prototype;  // 我不改F.prototype 
+Cat.prototype = new F();
+Cat.prototype.constructor = Cat;
+console.log(Animal.prototype.constructor);
+
+// 参数是两个构造函数
+function extend(Child, Parent) {
+    // 引入一个空对象，Function 来实例化，不走Object，没必要把祖师爷
+    // 原型链的概念
+    // 目的地是 Animal.prototype
+    // F.prototype = Animal.prototype;
+    // 出发 Cat.prototype = f 
+    // var F = function() {}
+}
+</script>
+</body>
+</html>

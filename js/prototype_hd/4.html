@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        function extend(Parent, Child) {
+            var F = function() {};  // 函数表达, 有开销但不大
+            F.prototype = Parent.prototype;
+            Child.prototype = new F();
+            Child.prototype.constructor = Child;
+        }
+
+        function Animal(name, age) {
+            this.name = name;
+            this.age = age;
+        } 
+        function Cat(name, age, color) {
+            Animal.call(this, name, age);
+            this.color = color;
+        }
+
+        extend(Animal, Cat);
+        Cat.prototype.eat = function() {
+            console.log('eat....');
+        }
+        console.log(Cat.prototype);
+        (new Cat()).eat()
+
+    </script>
+</body>
+</html>
