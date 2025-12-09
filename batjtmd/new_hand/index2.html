@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        // 模拟new 的功能
+        // reset 运算符
+        function objectFactory() {
+            // var obj = {};
+            var obj = new Object(); // 1 创建空对象
+            // console.log(arguments);
+            var Constructor = [].shift.call(arguments);
+            
+            console.log(Constructor, arguments, 
+                Object.prototype.toString.call(arguments)
+            );
+
+            Constructor.apply(obj, [...arguments]);     // 2 this
+            obj.__proto__ = Constructor.prototype;      // 3 原型链
+            return obj;      // 4 返回对象
+        }
+        function Person(name, age) {
+            this.name = name;
+            this.age = age;
+        }
+        Person.prototype.species = '人类';
+        Person.prototype.sayHi = function() {
+            console.log(`你好，我是${this.name}`);
+        }
+        let p = new Person('张三', 18);
+        let xxy = objectFactory(Person, '许xy', 18);
+        console.log(p, xxy)
+    </script>
+</body>
+</html>
