@@ -4,7 +4,6 @@
   - 界面由{{}} v-for 进行数据驱动template 
   - 聚焦于业务，数据的变化
 
-  
 ## 纯后端的套模板
 - mvc 开发模式   没有vue 和 react  
   - model 数据
