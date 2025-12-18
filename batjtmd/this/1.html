@@ -1,0 +1,21 @@
+<script>
+    var name = "windowName";  // 变量环境 全局变量
+    var a = {
+        name: 'cherry',
+        func1: function() {
+            console.log(this.name);
+        },
+        func2: function() {
+            // this  指向a 对象的方法调用的
+            console.log(this);
+            // call apply 指定this 指向 立即执行
+            setTimeout(function() {
+                console.log(this);  // window
+                this.func1();
+                return function(){console.log('hahaha');}
+            }.call(a), 1000)
+        }
+    }
+    a.func2(); // 执行到这里func2 才入栈
+</script>
+
