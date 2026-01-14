@@ -1,0 +1,17 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+body,html {
+    height: 100%;
+}
+html {
+    font-size: 10px;
+    background: url('background.png')  bottom center no-repeat; 
+    background-size: cover;
+}
+h3 {
+    line-height: 1;
+    font-size: 10px;
+}
+

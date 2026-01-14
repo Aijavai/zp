@@ -32,7 +32,8 @@ console.log(2);
 // then 
 // promise.then(
 //   function(result){ handle a successful result},
-//   function(error){ handle an error});
+//   function(error){ handle an error}
+// );
 // promise.then().catch(f) 是.then(null, f)的简写形式
 
 // finally 无论promise 被解决还是被拒绝，最终都会执行的回调函数

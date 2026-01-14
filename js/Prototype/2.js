@@ -10,3 +10,6 @@ const person2 = new Person('李四', 27);
 console.log(person1.name, person1.speci);
 console.log(person2.name, person2.speci);
 console.log(person1.__proto__, '/////');
+
+console.log(Person.__proto__ === Function.prototype);
+console.log(person1.__proto__ === Person.prototype)

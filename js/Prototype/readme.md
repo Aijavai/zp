@@ -26,7 +26,7 @@
     - 原型对象上有一个constructor 属性，指向构造函数
       由这个构造函数创建的实例，可以享用原型对象
 
-- 任何对象都默认指向Object.prototype, 除非 new 其他的构造函数生成的
+- 任何对象都默认指向Object.prototype, 除非new 其他的构造函数生成的
 - Object.prototype 原型是null 停止查找
   null 表示没有原型对象 
 

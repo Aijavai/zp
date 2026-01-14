@@ -16,6 +16,7 @@ console.log(
     typeof str4,
     typeof str5,
     Object.prototype.toString.call(str5),
+    Object.prototype.toString.call(str5).slice()
 );
 
 console.log(str5.length, str4.length);
