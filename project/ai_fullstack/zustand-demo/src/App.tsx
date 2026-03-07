@@ -1,35 +1,73 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import {
+  useState,
+} from 'react';
 
-function App() {
-  const [count, setCount] = useState(0)
+import { useCountStore } from './store/counter';
+import { useTodoStore } from './store/todo';
+import type { Todo } from './types';
 
+export default function App() {
+  const [inputValue, setInputValue] = useState<string>('');
+  const { 
+    count, 
+    increment,
+    decrement,
+    reset
+  } = useCountStore();  
+  const {
+    todos,
+    addTodo,
+    toggleTodo,
+    removeTodo,
+  } = useTodoStore();
+  const handleAdd = () => inputValue.trim() !== '';
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <div>
+      <h1>count is {count}</h1>
+      <button onClick={increment}>
+        increment
+      </button>
+      <button onClick={decrement}>
+        decrement
+      </button>
+      <button onClick={reset}>
+        reset
+      </button>
+      <section>
+        <h2>Todos {todos.length}</h2>
+        <div>
+          <input 
+          type="text"
+          placeholder="Add a new todo"
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && handleAdd()) {
+              addTodo(inputValue);
+              setInputValue('');
+            }
+          }}
+           />
+           <button onClick={() => {
+            if (handleAdd()) {
+              addTodo(inputValue);
+              setInputValue('');
+            }
+          }}>Add</button>
+        </div>
+        <ul>
+          { todos.map((todo: Todo) => (
+            <li key={todo.id}>
+              <span onClick={() => toggleTodo(todo.id)}>
+                {todo.title}
+              </span>
+              <button onClick={() => removeTodo(todo.id)}>
+                Remove
+              </button>
+            </li>
+          ))}
+        </ul>
+      </section>
+    </div>
   )
 }
-
-export default App
