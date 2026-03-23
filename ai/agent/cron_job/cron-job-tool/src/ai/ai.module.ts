@@ -1,0 +1,30 @@
+import { Module } from '@nestjs/common';
+import { AiService } from './ai.service';
+import { AiController } from './ai.controller';
+import { ChatOpenAI } from '@langchain/openai';
+import { ConfigService } from '@nestjs/config';
+
+@Module({
+  controllers: [AiController],
+  providers: [
+    AiService,
+    // provide 动态创建的
+    // 将model 从逻辑中剥离出来
+    // 将llm 作为provider 注册到ai.module.ts 中来向外提供
+    {
+      provide:'CHAT_MODEL',
+      // 工厂模式，
+      useFactory:(configService:ConfigService) => {
+        return new ChatOpenAI({
+          model:configService.get('MODEL_NAME'),
+          apiKey:configService.get('OPENAI_API_KEY'),
+          configuration:{
+            baseURL:configService.get('OPENAI_BASE_URL'),
+          }
+        });
+      },
+      inject:[ConfigService],
+    }
+  ],
+})
+export class AiModule {}
