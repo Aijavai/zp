@@ -1,0 +1,2 @@
+- npm init -y
+- pnpm i react-scripts   CRA 核心依赖包

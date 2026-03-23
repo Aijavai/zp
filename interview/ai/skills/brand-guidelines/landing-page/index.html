@@ -1,0 +1,192 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aura AI — Think Clearly. Act Decisively.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Mono&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --brand-blue:    #1A73E8;
+      --brand-blue-dk: #0D47A1;
+      --success:       #34A853;
+      --warning:       #FBBC04;
+      --text-primary:  #202124;
+      --text-secondary:#5F6368;
+      --border:        #DADCE0;
+      --bg:            #F8F9FA;
+      --white:         #FFFFFF;
+      --font: 'Roboto', sans-serif;
+      --font-mono: 'Roboto Mono', monospace;
+      --lh-heading: 1.25;
+      --lh-body: 1.6;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--font); font-size: 14px; color: var(--text-primary); background: var(--white); line-height: var(--lh-body); -webkit-font-smoothing: antialiased; }
+
+    /* NAV */
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 0 48px; height: 64px; background: rgba(255,255,255,0.94); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+    .nav-logo { display: flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 700; color: var(--brand-blue); text-decoration: none; }
+    .nav-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--success); animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:.5; transform:scale(1.5); } }
+    .nav-links { display: flex; align-items: center; gap: 32px; list-style: none; }
+    .nav-links a { font-size: 14px; font-weight: 500; color: var(--text-secondary); text-decoration: none; transition: color .2s; }
+    .nav-links a:hover { color: var(--brand-blue); }
+    .nav-cta { background: var(--brand-blue) !important; color: var(--white) !important; padding: 8px 20px; border-radius: 6px; }
+    .nav-cta:hover { background: var(--brand-blue-dk) !important; }
+
+    /* HERO */
+    .hero { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 120px 24px 80px; position: relative; overflow: hidden; }
+    .hero::before { content:''; position:absolute; top:-200px; left:50%; transform:translateX(-50%); width:900px; height:900px; border-radius:50%; background:radial-gradient(circle, rgba(26,115,232,.07) 0%, transparent 70%); pointer-events:none; }
+    .hero-badge { display:inline-flex; align-items:center; gap:8px; padding:6px 16px; border-radius:999px; border:1px solid var(--border); background:var(--bg); font-size:12px; font-weight:500; color:var(--text-secondary); margin-bottom:32px; animation:fadeUp .6s ease both; }
+    .hero-badge span { width:6px; height:6px; border-radius:50%; background:var(--success); }
+    .hero h1 { font-size: clamp(36px, 6vw, 64px); font-weight:700; line-height:var(--lh-heading); color:var(--text-primary); max-width:780px; letter-spacing:-1px; animation:fadeUp .6s .1s ease both; }
+    .hero h1 .accent { color: var(--brand-blue); }
+    .hero > p { font-size:18px; color:var(--text-secondary); max-width:540px; margin:24px auto 0; animation:fadeUp .6s .2s ease both; }
+    .hero-actions { display:flex; align-items:center; gap:16px; margin-top:40px; flex-wrap:wrap; justify-content:center; animation:fadeUp .6s .3s ease both; }
+    .btn-primary { display:inline-flex; align-items:center; gap:8px; padding:14px 28px; background:var(--brand-blue); color:var(--white); border:none; border-radius:8px; font-family:var(--font); font-size:15px; font-weight:600; cursor:pointer; text-decoration:none; transition:background .2s, transform .15s; }
+    .btn-primary:hover { background:var(--brand-blue-dk); transform:translateY(-1px); }
+    .btn-secondary { display:inline-flex; align-items:center; gap:8px; padding:14px 28px; background:transparent; color:var(--text-primary); border:1px solid var(--border); border-radius:8px; font-family:var(--font); font-size:15px; font-weight:500; text-decoration:none; transition:border-color .2s, color .2s; }
+    .btn-secondary:hover { border-color:var(--brand-blue); color:var(--brand-blue); }
+    .hero-stats { display:flex; align-items:center; gap:32px; margin-top:56px; padding-top:40px; border-top:1px solid var(--border); animation:fadeUp .6s .4s ease both; }
+    .stat-item { text-align:center; }
+    .stat-num { font-size:28px; font-weight:700; color:var(--brand-blue); line-height:1; }
+    .stat-label { font-size:12px; color:var(--text-secondary); margin-top:4px; }
+    .stat-div { width:1px; height:36px; background:var(--border); }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+
+    /* SECTION SHARED */
+    .section-header { text-align:center; margin-bottom:64px; }
+    .section-label { font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:1.5px; color:var(--brand-blue); margin-bottom:12px; }
+    .section-header h2 { font-size:32px; font-weight:700; line-height:var(--lh-heading); letter-spacing:-0.5px; }
+    .section-header p { font-size:16px; color:var(--text-secondary); margin-top:12px; max-width:480px; margin-left:auto; margin-right:auto; }
+    .features { background:var(--bg); padding:96px 48px; }
+    .features-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:24px; max-width:1100px; margin:0 auto; }
+    .feature-card { background:var(--white); border:1px solid var(--border); border-radius:12px; padding:32px; transition:box-shadow .2s,transform .2s; }
+    .feature-card:hover { box-shadow:0 8px 32px rgba(26,115,232,.10); transform:translateY(-2px); }
+    .feature-icon { width:48px; height:48px; border-radius:12px; background:rgba(26,115,232,.08); display:flex; align-items:center; justify-content:center; margin-bottom:20px; font-size:22px; }
+    .feature-card h3 { font-size:18px; font-weight:600; margin-bottom:10px; }
+    .feature-card p { font-size:14px; color:var(--text-secondary); line-height:var(--lh-body); }
+    .how { padding:96px 48px; background:var(--white); }
+    .steps { display:flex; align-items:flex-start; max-width:900px; margin:0 auto; position:relative; }
+    .steps::before { content:''; position:absolute; top:24px; left:16.5%; right:16.5%; height:2px; background:var(--border); z-index:0; }
+    .step { flex:1; display:flex; flex-direction:column; align-items:center; text-align:center; padding:0 24px; position:relative; z-index:1; }
+    .step-num { width:48px; height:48px; border-radius:50%; background:var(--brand-blue); color:var(--white); font-size:18px; font-weight:700; display:flex; align-items:center; justify-content:center; margin-bottom:20px; }
+    .step h3 { font-size:16px; font-weight:600; margin-bottom:8px; }
+    .step p { font-size:13px; color:var(--text-secondary); line-height:var(--lh-body); }
+    .testimonials { background:var(--bg); padding:96px 48px; }
+    .testimonials-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:24px; max-width:1000px; margin:0 auto; }
+    .testimonial-card { background:var(--white); border:1px solid var(--border); border-radius:12px; padding:28px; }
+    .stars { color:var(--warning); font-size:13px; letter-spacing:2px; margin-bottom:12px; }
+    .quote { font-size:14px; color:var(--text-primary); line-height:var(--lh-body); margin-bottom:20px; }
+    .author { display:flex; align-items:center; gap:12px; }
+    .author-avatar { width:36px; height:36px; border-radius:50%; background:var(--brand-blue); color:var(--white); display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:600; }
+    .author-name { font-size:13px; font-weight:600; }
+    .author-title { font-size:12px; color:var(--text-secondary); }
+    .cta-banner { background:var(--brand-blue); padding:80px 48px; text-align:center; }
+    .cta-banner h2 { font-size:32px; font-weight:700; color:var(--white); line-height:var(--lh-heading); letter-spacing:-0.5px; margin-bottom:16px; }
+    .cta-banner p { font-size:16px; color:rgba(255,255,255,.8); margin-bottom:36px; }
+    .btn-white { display:inline-flex; align-items:center; gap:8px; padding:14px 32px; background:var(--white); color:var(--brand-blue); border-radius:8px; font-size:15px; font-weight:600; text-decoration:none; transition:opacity .2s,transform .15s; }
+    .btn-white:hover { opacity:.92; transform:translateY(-1px); }
+    footer { background:var(--text-primary); color:rgba(255,255,255,.5); padding:40px 48px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px; }
+    .footer-logo { color:var(--white); font-weight:700; font-size:16px; }
+    .footer-links { display:flex; gap:24px; }
+    .footer-links a { color:rgba(255,255,255,.5); text-decoration:none; font-size:13px; }
+    .footer-links a:hover { color:var(--white); }
+    .copyright { font-size:12px; }
+    @media (max-width:768px) { nav { padding:0 20px; } .nav-links { display:none; } .hero { padding:100px 20px 60px; } .hero-stats { gap:20px; } .features,.how,.testimonials,.cta-banner { padding:64px 20px; } .steps { flex-direction:column; gap:32px; } .steps::before { display:none; } footer { flex-direction:column; text-align:center; } .footer-links { justify-content:center; } }  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo"><div class="nav-dot"></div>Aura AI</a>
+  <ul class="nav-links">
+    <li><a href="#features">Features</a></li>
+    <li><a href="#how">How It Works</a></li>
+    <li><a href="#testimonials">Testimonials</a></li>
+    <li><a href="#" class="nav-cta">Get Started</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge"><span></span>Now in public beta — no credit card required</div>
+  <h1>Your AI teammate that<br><span class="accent">thinks before it acts</span></h1>
+  <p>Aura AI helps product teams move faster — from raw ideas to structured decisions, without the noise.</p>
+  <div class="hero-actions">
+    <a href="#" class="btn-primary">Start for free &rarr;</a>
+    <a href="#how" class="btn-secondary">&#9654; See how it works</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat-item"><div class="stat-num">12k+</div><div class="stat-label">Teams using Aura</div></div>
+    <div class="stat-div"></div>
+    <div class="stat-item"><div class="stat-num">98%</div><div class="stat-label">Satisfaction rate</div></div>
+    <div class="stat-div"></div>
+    <div class="stat-item"><div class="stat-num">3x</div><div class="stat-label">Faster decisions</div></div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div class="section-header">
+    <div class="section-label">Features</div>
+    <h2>Everything your team needs to move fast</h2>
+    <p>Built for clarity, designed for speed. Aura AI fits into how you already work.</p>
+  </div>
+  <div class="features-grid">
+    <div class="feature-card"><div class="feature-icon">&#x1F9E0;</div><h3>Contextual Reasoning</h3><p>Aura reads your documents, tickets, and notes — then reasons across all of them to surface what actually matters.</p></div>
+    <div class="feature-card"><div class="feature-icon">&#x26A1;</div><h3>Instant Summaries</h3><p>Turn hour-long meeting transcripts into clear action items in seconds. No fluff, just decisions.</p></div>
+    <div class="feature-card"><div class="feature-icon">&#x1F4CA;</div><h3>Decision Tracking</h3><p>Every decision Aura helps you make is logged, searchable, and tied back to the original context.</p></div>
+    <div class="feature-card"><div class="feature-icon">&#x1F517;</div><h3>Deep Integrations</h3><p>Connect Notion, Jira, Slack, and GitHub. Aura works where your team already does.</p></div>
+    <div class="feature-card"><div class="feature-icon">&#x1F512;</div><h3>Enterprise-grade Security</h3><p>SOC 2 Type II certified. Your data stays yours — never used to train any model.</p></div>
+    <div class="feature-card"><div class="feature-icon">&#x1F465;</div><h3>Team Collaboration</h3><p>Shared workspaces, role-based access, and real-time co-editing so the whole team stays aligned.</p></div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="how">
+  <div class="section-header">
+    <div class="section-label">How It Works</div>
+    <h2>From context to clarity in three steps</h2>
+    <p>No setup wizards. No lengthy onboarding. Just connect and go.</p>
+  </div>
+  <div class="steps">
+    <div class="step"><div class="step-num">1</div><h3>Connect your tools</h3><p>Link your existing workspace — docs, tickets, chats. Aura ingests context automatically.</p></div>
+    <div class="step"><div class="step-num">2</div><h3>Ask anything</h3><p>Type a question or describe a challenge. Aura reasons across your full knowledge base to respond.</p></div>
+    <div class="step"><div class="step-num">3</div><h3>Act with confidence</h3><p>Get structured outputs — summaries, action items, decision logs — ready to share with your team.</p></div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials" id="testimonials">
+  <div class="section-header">
+    <div class="section-label">Testimonials</div>
+    <h2>Teams that ship faster with Aura</h2>
+    <p>Hear from the people who use it every day.</p>
+  </div>
+  <div class="testimonials-grid">
+    <div class="testimonial-card"><div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="quote">Aura cut our weekly planning time in half. It surfaces the right context before I even know I need it.</p><div class="author"><div class="author-avatar">SL</div><div><div class="author-name">Sarah Lin</div><div class="author-title">Head of Product, Finwave</div></div></div></div>
+    <div class="testimonial-card"><div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="quote">Finally an AI tool that understands our workflow. The decision tracking feature alone is worth it.</p><div class="author"><div class="author-avatar">MK</div><div><div class="author-name">Marcus Kim</div><div class="author-title">Engineering Lead, Stackly</div></div></div></div>
+    <div class="testimonial-card"><div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="quote">We onboarded 40 people in a day. No training needed — Aura just works the way you expect it to.</p><div class="author"><div class="author-avatar">AR</div><div><div class="author-name">Amara Reyes</div><div class="author-title">COO, Loopbase</div></div></div></div>
+  </div>
+</section>
+
+<!-- CTA BANNER -->
+<section class="cta-banner">
+  <h2>Ready to think more clearly?</h2>
+  <p>Join 12,000+ teams already using Aura AI to make better decisions, faster.</p>
+  <a href="#" class="btn-white">Get started for free &rarr;</a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Aura AI</div>
+  <div class="footer-links"><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Security</a><a href="#">Contact</a></div>
+  <div class="copyright">&copy; 2026 Aura AI, Inc. All rights reserved.</div>
+</footer>
+
+</body>
+</html>
