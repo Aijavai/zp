@@ -34,10 +34,28 @@
 - 解决方案
   - 截断 slice(-n) 最近最关心的对话还在 滑动窗口 LRU 
   - 将要截断的messages 总结一下(summarize) 总结
-  当前的多轮对话 Memory 机制够用了
+  当前的多轮对话 Memory 机制够用了 /compact
   - 检索 (先存 数据库、文件) 提问 rag?
   cursor 等 超越当前对话，将之前对话存储，rag 利用的场景
   AI Agent 越来越懂我们 
 
-  清空messages 
-  新的任务，节省token 
+  清空messages  /clear
+  新的任务，节省token  
+
+ - cursor 通过messages 计算token 开销
+   40%， 0%
+ - 自动触发总结
+ - 手动触发 /compact  /clear
+
+ 
+
+## FileSystemChatMessageHistory
+- cursor 的messages history 实现方案
+  - seesion 会话 一次会话 有一个主题
+    - js 八股
+    - 恋爱
+    - 篮球
+    - 考研
+  - 全新主题，新开一个session 
+  - 持久化存储 messageHistory
+  - 恢复某个seeion 继续chat
